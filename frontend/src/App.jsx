@@ -1,13 +1,15 @@
 import React from 'react';
-import {Routes, route} from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 import Home from "./templates/Home";
-import Header from "./templates/Header"
+import Header from "./templates/Header";
+import Account from "./templates/Account";
 const App = () => {
   return (
     <div>
-      <Header name = "test"/> 
+      <Header name = {window.location.pathname}/> 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/accounts" element={<Account />} />
       </Routes> 
     </div> 
   )
