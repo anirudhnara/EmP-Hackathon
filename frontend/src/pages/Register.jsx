@@ -63,15 +63,15 @@ const Register = () => {
 			) : (
 				
 				<div className="p-4">
-					<h1 className="text-3xl my-4 text-center">Register</h1>
-					<div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] max-w-[75vw] p-4 mx-auto">
+					<h1 className="text-3xl my-4 text-center font-bold">Register</h1>
+					<div className="flex flex-col border-sky-400 rounded-xl w-[600px] max-w-[75vw] p-4 mx-auto">
 						<div className="my-4">
-							<label className="text-xl mr-4 text-gray-500">Username</label>
+							<label className="text-xl mr-4 text-gray-300">Username</label>
 							<input
 								type="text"
 								value={username}
 								onChange={(e) => setUsername(e.target.value)}
-								className="border-2 border-gray-500 px-4 py-2 w-full rounded-xl text-black"
+								className="border-2 border-gray-00 px-4 py-2 w-full rounded-xl text-black"
 							/>
 						</div>
 						<div className="my-4">
