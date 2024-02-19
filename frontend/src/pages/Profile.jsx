@@ -14,10 +14,13 @@ const Profile = () => {
 	const [loading, setLoading] = useState(true);
 	const [user, setUser] = useState({});
 	const [posts, setPosts] = useState([]);
+	const [deletePost, setDeletePost] = useState("");
+
+	// Check if user is logged in
 	useEffect(() => {
 		setLoading(true);
 		axios
-			.get("http://localhost:8080/", { withCredentials: true })
+			.get("https://ecoback.tennisbowling.com/", { withCredentials: true })
 			.then((res) => {
 				if (!res.data.authenticated) {
 					Navigate("/login");
@@ -29,31 +32,35 @@ const Profile = () => {
 			});
 	}, []);
 
-	axios.get("http://localhost:8080/projects/get_user_posts", { withCredentials: true })
-		.then((res) => {
-			setPosts(res.data);
-			setLoading(false);
-		})
-
+	// See the user's own posts
 	useEffect(() => {
-		setLoading(true);
-		axios
-			.get("http://localhost:8080/", { withCredentials: true })
+		axios.get("https://ecoback.tennisbowling.com/projects/get_user_posts", { withCredentials: true })
 			.then((res) => {
-				if (!res.data.authenticated) {
-					Navigate("/login");
-				}
+				setPosts(res.data);
 				setLoading(false);
 			})
-			.catch((error) => {
-				enqueueSnackbar("Error", { variant: "error", autoHideDuration: 1000 });
-			});
-	}, []);
+	}, [])
 
-	axios.get("http://localhost:8080/get_user", { withCredentials: true })
-		.then((res) => {
-			setUser(res.data.user);
-		})
+	// Get information on the user
+	useEffect(() => {
+		axios.get("https://ecoback.tennisbowling.com/get_user", { withCredentials: true })
+			.then((res) => {
+				setUser(res.data.user);
+			})
+	}, [])
+
+	// Delete the post
+	const handleDeletePost = (post_title) => {
+		axios.post(`https://ecoback.tennisbowling.com/projects/delete_post`, { post_title: post_title }, { withCredentials: true })
+			.then((res) => {
+				setPosts(posts.filter((post) => post.title !== post_title));
+				enqueueSnackbar("Post Deleted", { variant: "success", autoHideDuration: 1000 });
+			})
+			.catch((error) => {
+				// Handle error
+				enqueueSnackbar("Error deleting post", { variant: "error", autoHideDuration: 1000 });
+			});
+	};
 
 	return (
 		<>
@@ -77,7 +84,16 @@ const Profile = () => {
 								<div className="grid gap-4 2xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 px-[10%] py-16">
 									{posts.map((post, index) => (
 										<div key={index} className={index !== posts.length - 1 ? '' : ''}>
-											<SocialMediaPost header={post.title} body={post.text} username={post.username} isVolunteer={false} isFundraiser={false} imgSrc={post.image} showVolunteer={post.isVolunteer} />
+											<SocialMediaPost
+												header={post.title}
+												body={post.text}
+												username={post.username}
+												isVolunteer={false}
+												isFundraiser={false}
+												imgSrc={post.image}
+												showVolunteer={post.isVolunteer}
+												listVolunteers={post.volunteers}
+												onDelete={() => handleDeletePost(post.title)} />
 										</div>)
 									)}
 								</div>

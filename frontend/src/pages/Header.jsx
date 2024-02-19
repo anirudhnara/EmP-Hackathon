@@ -10,9 +10,10 @@ const Header = (props) => {
   const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
 
+  // Log out the user
   const logout = () => {
     axios
-      .delete("http://localhost:8080/logout", { withCredentials: true })
+      .delete("https://ecoback.tennisbowling.com/logout", { withCredentials: true })
       .then((response) => {
         enqueueSnackbar("Logout Success", {
           variant: "success",
@@ -25,11 +26,12 @@ const Header = (props) => {
       });
   }
 
+  // Check if user is logged in
   useEffect(() => {
     setLoading(true);
     setLoggedIn(false);
     let res = axios
-      .get("http://localhost:8080/", { withCredentials: true })
+      .get("https://ecoback.tennisbowling.com/", { withCredentials: true })
       .then((res) => {
         if (res.data.authenticated) {
           setLoggedIn(true);
@@ -39,29 +41,29 @@ const Header = (props) => {
       .catch((error) => {
         enqueueSnackbar("Error", { variant: "error", autoHideDuration: 1000 });
       });
-    console.log(res)
   }, []);
 
+  // Depending on whether the user is logged in, change the header links
   function CreateHeaderLinks() {
     if (loggedIn) {
       return (
         <div className='flex items-center gap-10'>
-          <a href="./profile" className={` ${window.location.pathname === '/profile' ? 'text-[gray]' : 'text-[blue]'}`}>
-            <p className='text-lg'>profile</p>
+          <a href="/profile" className={` ${window.location.pathname === '/profile' ? 'text-[gray]' : 'text-[blue]'}`}>
+            <p className='text-lg text-white'>Profile</p>
           </a>
-          <a  href="javascript:void(0);" onClick={logout} className="text-[blue]">
-            <p className='text-lg'>logout</p>
+          <a href="javascript:void(0);" onClick={logout} className="text-[blue]">
+            <p className='text-lg text-white'>Logout</p>
           </a>
         </div>
       );
     } else {
       return (
         <div className='flex items-center gap-10'>
-          <a href="./login" className={` ${window.location.pathname === '/login' ? 'text-[gray]' : 'text-[blue]'}`}>
-            <p className='text-lg'>Log In</p>
+          <a href="/login" className={` ${window.location.pathname === '/login' ? 'text-[gray]' : 'text-[blue]'}`}>
+            <p className='text-lg text-white'>Log In</p>
           </a>
-          <a href="./register" className={` ${window.location.pathname === '/register' ? 'text-[gray]' : 'text-[blue]'}`}>
-            <p className='text-lg'>Register</p>
+          <a href="/register" className={` ${window.location.pathname === '/register' ? 'text-[gray]' : 'text-[blue]'}`}>
+            <p className='text-lg text-white'>Register</p>
           </a>
         </div>
       )
@@ -69,11 +71,11 @@ const Header = (props) => {
   }
   return (<>
     <div className="sticky top-0 z-10">
-      <div className='sticky top-0 w-[100%] bg-tahiti-200 h-[75px] px-10 flex items-center justify-between z-10'>
+      <div className='sticky top-0 w-[100%] bg-gray-700 h-[75px] px-10 flex items-center justify-between z-10'>
         <a href="/">
           <div className='flex items-center'>
-            <img src={"/images/logo.png"} alt='Logo' className='h-[50px] w-[50px] mr-5 mt-2'/>
-            <h1 className='text-2xl font-bold'>EcoCollab</h1>
+            <img src={"/images/logo.png"} alt='Logo' className='h-[50px] w-[50px] mr-5 mt-2' />
+            <h1 className='text-2xl font-bold text-white font-poppin hidden md:block'>EcoCollab</h1>
           </div></a>
         {loading ? (<h1 className="text-xl">Loading...</h1>) : (CreateHeaderLinks())}
       </div>

@@ -7,6 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        
       transparent: 'transparent',
       current: 'currentColor',
       'white': '#ffffff',

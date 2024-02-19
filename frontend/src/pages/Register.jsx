@@ -10,10 +10,12 @@ const Register = () => {
 	const Navigate = useNavigate();
 	const { enqueueSnackbar } = useSnackbar();
 	const [loading, setLoading] = useState(true);
+
+	// Check if user is logged in
 	useEffect(() => {
 		setLoading(true);
 		axios
-			.get("http://localhost:8080/", { withCredentials: true })
+			.get("https://ecoback.tennisbowling.com/", { withCredentials: true })
 			.then((res) => {
 				if (res.data.authenticated) {
 					Navigate("/profile");
@@ -24,6 +26,8 @@ const Register = () => {
 				enqueueSnackbar("Error", { variant: "error", autoHideDuration: 1000 });
 			});
 	}, []);
+
+	// Create the account
 	const handleRegister = () => {
 		const data = {
 			username,
@@ -34,7 +38,7 @@ const Register = () => {
 			return;
 		}
 		axios
-			.post("http://localhost:8080/register", data, { withCredentials: true })
+			.post("https://ecoback.tennisbowling.com/register", data, { withCredentials: true })
 			.then((res) => {
 				enqueueSnackbar("Registered", { variant: "success", autoHideDuration: 1000 });
 				Navigate("/profile");
@@ -55,16 +59,17 @@ const Register = () => {
 			{loading ? (
 				<h1 className="text-center">Loading...</h1>
 			) : (
+				
 				<div className="p-4">
 					<h1 className="text-3xl my-4 text-center">Register</h1>
-					<div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto">
+					<div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] max-w-[75vw] p-4 mx-auto">
 						<div className="my-4">
 							<label className="text-xl mr-4 text-gray-500">Username</label>
 							<input
 								type="text"
 								value={username}
 								onChange={(e) => setUsername(e.target.value)}
-								className="border-2 border-gray-500 px-4 py-2 w-full rounded-xl"
+								className="border-2 border-gray-500 px-4 py-2 w-full rounded-xl text-black"
 							/>
 						</div>
 						<div className="my-4">
@@ -73,7 +78,7 @@ const Register = () => {
 								type="password"
 								value={password}
 								onChange={(e) => setPassword(e.target.value)}
-								className="border-2 border-gray-500 px-4 py-2 w-full rounded-xl"
+								className="border-2 border-gray-500 px-4 py-2 w-full rounded-xl text-black"
 								onKeyDown={handleKeyPress}
 							/>
 						</div>
@@ -83,7 +88,7 @@ const Register = () => {
 								type="password"
 								value={confirmPassword}
 								onChange={(e) => setConfirmPassword(e.target.value)}
-								className="border-2 border-gray-500 px-4 py-2 w-full rounded-xl"
+								className="border-2 border-gray-500 px-4 py-2 w-full rounded-xl text-black"
 								onKeyDown={handleKeyPress}
 							/>
 						</div>
@@ -97,6 +102,7 @@ const Register = () => {
 						</Link>
 					</div>
 				</div>
+				
 			)}
 		</>
 	);

@@ -19,9 +19,10 @@ const CreatePost = () => {
 	const navigate = useNavigate();
 	const { enqueueSnackbar } = useSnackbar();
 
+	// Check if user is logged in
 	useEffect(() => {
 		axios
-			.get("http://localhost:8080/", { withCredentials: true })
+			.get("https://ecoback.tennisbowling.com/", { withCredentials: true })
 			.then((res) => {
 				if (!res.data.authenticated) {
 					navigate("/login");
@@ -32,6 +33,7 @@ const CreatePost = () => {
 			});
 	}, []);
 
+	// Check if new image has been requested for upload
 	const handleImageChange = (e) => {
 		const file = e.target.files[0];
 		setImage(file);
@@ -39,6 +41,7 @@ const CreatePost = () => {
 		setImageUrl(url);
 	};
 
+	// See if submit button clicked
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (image) {
@@ -46,6 +49,7 @@ const CreatePost = () => {
 		}
 	};
 
+	// Upload image to CDN 
 	const onImageSubmit = async (image) => {
 		const formData = new FormData();
 		formData.append("file", image);
@@ -63,6 +67,7 @@ const CreatePost = () => {
 		}
 	};
 
+	// Create the post
 	const handleSavePost = () => {
 		console.log(imagelink)
 		let post = {
@@ -77,7 +82,7 @@ const CreatePost = () => {
 		}
 		setLoading(true);
 		axios
-			.post('http://localhost:8080/projects/create_post', { post }, { withCredentials: true })
+			.post('https://ecoback.tennisbowling.com/projects/create_post', { post }, { withCredentials: true })
 			.then(() => {
 				setLoading(false);
 				enqueueSnackbar('Post created successfully', { variant: 'success' });
@@ -93,79 +98,79 @@ const CreatePost = () => {
 		<>
 			<Header name={window.location.pathname} />
 			<Sidebar />
-			<div className=' p-4 items-center justify-center'>
-				<h1 className=' flex items-center justify-center text-3xl my-4'>Create Post</h1>
+			<div className="h-[100%] py-[5rem] bg-gray-800 flex flex-col justify-center items-center text-center min-w-[100vw] top-0 box-border">
+				<div className="bg-gray-800 oveflow-hidden">
+					<div className='flex flex-col rounded-xl w-[45rem] max-w-[80vw] p-4 m-auto bg-gray-900 -z-[10] overflow-auto'>
+						<h1 className=' text-3xl my-4 text-white font-bold align-middle'>Create Post</h1>
+						<div className='my-4'>
+							<label className='text-xl mr-4 text-gray-300 w-1/3'>Title:</label>
+							<input
+								type='text'
+								value={title}
+								onChange={(e) => setTitle(e.target.value)}
+								className='px-4 py-2 w-5/6 bg-gray-800 text-white rounded-xl'
 
-				<div className='flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto'>
-					<div className='my-4'>
-						<label className='text-xl mr-4 text-gray-500'>Title</label>
-						<input
-							type='text'
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-							className='border-2 border-gray-500 px-4 py-2 w-full'
+							/>
+						</div>
+						<div className='my-4 align-middle'>
+							<label className='text-xl mr-4 text-gray-300 w-1/6'>Text:</label>
+							<input
+								type='text'
+								value={text}
+								onChange={(e) => setText(e.target.value)}
+								className='px-4 py-2 w-5/6 bg-gray-800 text-white rounded-xl'
 
-						/>
+							/>
+						</div>
+						<form onSubmit={handleSubmit} className="mt-4 items-center">
+							<input
+								type="file"
+								accept="image/*"
+								onChange={handleImageChange}
+								className="block w-full text-sm text-white file:rounded-xl file:bg-gradient-to-r from-violet-500 to-orange-500 file:border-none file:h-8 file:text-white "
+							/>
+							{imageUrl && (
+								<div>
+									<button
+										type="submit"
+										className="mt-2 text-white block w-full py-2 px-4 mb-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 focus:outline-none focus:ring focus:border-blue-300"
+									>
+										Submit
+									</button>
+									<p className="text-lg font-semibold mb-2 text-white">
+										Preview:
+									</p>
+									<img
+										src={imageUrl}
+										alt="Uploaded"
+										className="mx-auto rounded-lg max-h-80 mb-4 text-white"
+									/>
+								</div>
+							)}
+						</form>
+						<div className='my-4'>
+							<label className='text-xl mr-4 text-gray-500'>Volunteer</label>
+							<input
+								type='checkbox'
+								value={isVolunteer}
+								onChange={(e) => setisVolunteer(e.target.checked)}
+								className='border-2 border-gray-500 px-4 py-2'
+
+							/>
+						</div>
+						<div className='my-4'>
+							<label className='text-xl mr-4 text-gray-500'>Fundraiser</label>
+							<input
+								type='checkbox'
+								checked={isFundraiser}
+								onChange={(x) => { setisFundraiser(x.target.checked)}}
+								className='border-2 border-gray-500 px-4 py-2'
+							/>
+						</div>
+						<button className='p-2 m-8 bg-gradient-to-r from-green-300 to-emerald-700 rounded-xl text-white font-bold' onClick={handleSavePost}>
+							Save
+						</button>
 					</div>
-					<div className='my-4'>
-						<label className='text-xl mr-4 text-gray-500'>Text</label>
-						<input
-							type='text'
-							value={text}
-							onChange={(e) => setText(e.target.value)}
-							className='border-2 border-gray-500 px-4 py-2 w-full'
-
-						/>
-					</div>
-					<form onSubmit={handleSubmit} className="mt-4">
-						<input
-							type="file"
-							accept="image/*"
-							onChange={handleImageChange}
-							className="w-full py-2 px-4 mb-4 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring focus:border-blue-300"
-						/>
-						{imageUrl && (
-							<div>
-								<button
-									type="submit"
-									className="block w-full py-2 px-4 mb-2 rounded-lg bg-green-600 text-white font-semibold hover:bg-green-700 focus:outline-none focus:ring focus:border-blue-300"
-								>
-									Submit
-								</button>
-								<p className="text-lg font-semibold mb-2">
-									Preview:
-								</p>
-								<img
-									src={imageUrl}
-									alt="Uploaded"
-									className="mx-auto rounded-lg max-h-80 mb-4"
-								/>
-							</div>
-						)}
-					</form>
-					<div className='my-4'>
-						<label className='text-xl mr-4 text-gray-500'>Volunteer</label>
-						<input
-							type='checkbox'
-							value={isVolunteer}
-							onChange={(e) => setisVolunteer(e.target.value)}
-							className='border-2 border-gray-500 px-4 py-2 '
-
-						/>
-					</div>
-					<div className='my-4'>
-						<label className='text-xl mr-4 text-gray-500'>Fundraiser</label>
-						<input
-							type='checkbox'
-							value={isFundraiser}
-							onChange={(e) => setisFundraiser(e.target.value)}
-							className='border-2 border-gray-500 px-4 py-2 '
-
-						/>
-					</div>
-					<button className='p-2 bg-sky-800 m-8' onClick={handleSavePost}>
-						Save
-					</button>
 				</div>
 			</div>
 		</>

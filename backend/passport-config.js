@@ -2,6 +2,7 @@ import local from "passport-local";
 import bcrypt from "bcrypt";
 import { User } from "./models/user.js";
 const LocalStrategy = local.Strategy;
+// Creates a template for user using passport, a library/middleware that authenticates users and saves login information in a session in cookies
 const initialize = (passport) => {
 	const authenticateUser = async (username, password, done) => {
 		const user = await User.findOne({ username: username.toLowerCase() });

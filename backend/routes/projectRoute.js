@@ -2,15 +2,13 @@ import express from 'express';
 import { User } from '../models/user.js';
 import Fuse from 'fuse.js';
 
-const router = express.Router();
-router.get("/test2", async (req, res) => {
-    return res.send("Hello World");
-});
 
-router.post("/create_post", async (req, res) => {
+const router = express.Router();
+
+router.post("/create_post", async (req, res) => { // create a post
     try {
-        if (
-            !req.body.post.title || !req.body.post.text || req.body.post.isVolunteer == undefined || req.body.post.isFundraiser == undefined
+        if ( // check if all required fields are sent
+            !req.body.post.title || !req.body.post.text || req.body.post.isVolunteer == undefined || req.body.post.isFundraiser == undefined 
         ) {
             return res.status(400).send({
                 message: 'Send all required fields: post, post.title, post.text, post.isVolunteer, post.isFundraiser'
@@ -24,9 +22,20 @@ router.post("/create_post", async (req, res) => {
         newPost.numVolunteers = 0;
         newPost.numDonors = 0;
 
+        if(newPost.isVolunteer == "true") { // convert from string to boolean, something within js is broken and randomly decides to send "true" instead of true and "false" instead of false
+            newPost.isVolunteer = true;
+        } if(newPost.isVolunteer == "false"){
+            newPost.isVolunteer = false;
+        }
+        if(newPost.isFundraiser == "true") {
+            newPost.isFundraiser = true;
+        } if(newPost.isFundraiser == "false") {
+            newPost.isFundraiser = false;
+        }
+
         const userId = req.user._id
-        let user = await User.findById(userId)
-        user.set({ posts: user.posts.concat(newPost) })
+        let user = await User.findById(userId) // find the user based on their id
+        user.set({ posts: user.posts.concat(newPost) }) // add the new post to the user's posts
         await user.save()
 
 
@@ -38,16 +47,16 @@ router.post("/create_post", async (req, res) => {
 });
 
 
-router.post("/volunteer", async (req, res) => {
+router.post("/volunteer", async (req, res) => { // volunteer for a post
     try {
         if (!req.body.post_title) {
             return res.status(400).send({ message: "post_title is required" });
-        } 
+        }
 
         let users = await User.find()
         let posts = []
         users.forEach(user => {
-            posts = posts.concat(user.posts)
+            posts = posts.concat(user.posts) // add the post to the posts array
         });
 
         let post = posts.find(post => post.title === req.body.post_title)
@@ -60,8 +69,8 @@ router.post("/volunteer", async (req, res) => {
         }
 
         let user = await User.findOne({ username: post.username })
-        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, volunteers: p.volunteers.concat(req.user.username) } : p) })
-        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, numVolunteers: p.numVolunteers + 1 } : p) })
+        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, volunteers: p.volunteers.concat(req.user.username) } : p) }) // add the user to the volunteers list in the post
+        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, numVolunteers: p.numVolunteers + 1 } : p) }) // add 1 to the number of volunteers in the post
         await user.save()
 
         return res.status(200).send("Volunteered successfully")
@@ -72,7 +81,7 @@ router.post("/volunteer", async (req, res) => {
     }
 })
 
-router.post("/donate", async (req, res) => {
+router.post("/donate", async (req, res) => { // donate to a post
     try {
         if (!req.body.post_title) {
             return res.status(400).send({ message: "post_title is required" });
@@ -90,12 +99,12 @@ router.post("/donate", async (req, res) => {
         }
 
         if (post.donors.includes(req.user.username)) {
-            return res.status(400).send({ message: "User is already volunteering for this post" });
+            return res.status(400).send({ message: "User is already donating for this post" });
         }
 
         let user = await User.findOne({ username: post.username })
-        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, donors: p.donors.concat(req.user.username) } : p) })
-        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, numDonors: p.numDonors + 1 } : p) })
+        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, donors: p.donors.concat(req.user.username) } : p) }) // same logic as volunteering
+        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, numDonors: p.numDonors + 1 } : p) }) // same logic as volunteering
         await user.save()
 
         return res.status(200).send("Donated successfully")
@@ -106,7 +115,7 @@ router.post("/donate", async (req, res) => {
     }
 })
 
-router.get("/get_user_posts", async (req, res) => {
+router.get("/get_user_posts", async (req, res) => { // get all posts of a user
     try {
         var userId = req.user._id
         if (req.body.user_id != undefined) {
@@ -114,19 +123,81 @@ router.get("/get_user_posts", async (req, res) => {
         }
 
         const user = await User.findById(userId)
-        return res.status(200).send(user.posts)   
+        return res.status(200).send(user.posts)
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: error.message });
     }
 });
 
-router.delete("/delete_post", async (req, res) => { 
+router.post("/delete_post", async (req, res) => { // delete a post
     try {
         if (!req.body.post_title) {
             return res.status(400).send({ message: "post_title is required" });
         }
-        
+
+        let users = await User.find()
+        let posts = []
+        users.forEach(user => {
+            posts = posts.concat(user.posts)
+        });
+
+        let post = posts.find(post => post.title === req.body.post_title) // find post by title
+        if (!post) {
+            return res.status(400).send({ message: "Post not found" });
+        }
+
+        let user = await User.findOne({ username: post.username })
+        user.set({ posts: user.posts.filter(p => p.title !== req.body.post_title) }) // keep every post except for the one with the same title as the passed in title
+        await user.save()
+
+        return res.status(200).send("Post deleted successfully")
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: error.message });
+    }
+});
+
+router.get("/get_all_posts", async (req, res) => { // get all posts
+    try {
+
+        let users = await User.find()
+        let posts = []
+        users.forEach(user => {
+            posts = posts.concat(user.posts) // add all posts to the posts array
+        });
+
+        // if the search query is sent filter posts
+        if (req.body.search_query) { // ignore this, this is, will never be used in our code but kept in for future's sake
+            const options = {
+                keys: ['title'],
+                includeScore: true
+            };
+            const fuse = new Fuse(posts, options);
+            const result = fuse.search(req.body.search_query);
+            posts = result.map(({ item }) => item);
+        }
+
+        return res.status(200).send(posts) // return all posts
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ message: error.message });
+    }
+});
+
+router.post("/user_status", async (req, res) => { // get user status for a post (if volunteering and if donating)
+    try {
+        var userId = req.user._id
+        if (req.body.user_id != undefined) {
+            userId = req.body.user_id
+        }
+
+        if (!req.body.post_title) {
+            return res.status(400).send({ message: "post_title is required" });
+        }
+
         let users = await User.find()
         let posts = []
         users.forEach(user => {
@@ -138,19 +209,27 @@ router.delete("/delete_post", async (req, res) => {
             return res.status(400).send({ message: "Post not found" });
         }
 
-        let user = await User.findOne({ username: post.username })
-        user.set({ posts: user.posts.filter(p => p.title !== req.body.post_title) })
-        await user.save()
+        let donating = false
+        let volunteering = false
+        if (post.donors.includes(req.user.username)) { // check if list of donors includes user's username
+            donating = true
+        }
+        if (post.volunteers.includes(req.user.username)) { // same logic as for donors
+            volunteering = true
+        }
+        
 
-        return res.status(200).send("Post deleted successfully")
+        return res.status(200).send({ "donating": donating, "volunteering": volunteering })
 
-    } catch (error) {
+
+    }
+    catch (error) {
         console.log(error);
         res.status(500).send({ message: error.message });
     }
-});
+})
 
-router.get("/get_all_posts", async (req, res) => {
+router.post("/search_posts", async (req, res) => { // search posts using fuzzy searching library fuse
     try {
         let users = await User.find()
         let posts = []
@@ -158,26 +237,30 @@ router.get("/get_all_posts", async (req, res) => {
             posts = posts.concat(user.posts)
         });
 
-        // if the search query is sent filter posts
-        if (req.body.search_query) {
-            const options = {
-                keys: ['title'],
-                includeScore: true
-            };
-            const fuse = new Fuse(posts, options);
-            const result = fuse.search(req.body.search_query);
-            posts = result.map(({ item }) => item);
+        const options = {
+            keys: ['title', 'text'],
+            includeScore: true
+        };
+        const fuse = new Fuse(posts, options);
+        const result = fuse.search(req.body.search_query); // use fuse with options to search
+        for(let i = 0; i < result.length; i++) {
+            if(result[i].score > 0.3) { // filter out things not similar enough
+                result.splice(i, 1)
+                i--;
+            }
         }
-
+        
+        posts = result.map(({ item }) => item);
         return res.status(200).send(posts)
+
     }
     catch (error) {
         console.log(error);
         res.status(500).send({ message: error.message });
     }
-});
+})
 
-router.post("/get_post", async (req, res) => {
+router.post("/get_post", async (req, res) => { // get a post using the title
     try {
         if (!req.body.post_title) {
             return res.status(400).send({ message: "post_title is required" });
@@ -189,7 +272,7 @@ router.post("/get_post", async (req, res) => {
             posts = posts.concat(user.posts)
         });
 
-        let post = posts.find(post => post.title === req.body.post_title)
+        let post = posts.find(post => post.title === req.body.post_title) // find post by title
         if (!post) {
             return res.status(400).send({ message: "Post not found" });
         }

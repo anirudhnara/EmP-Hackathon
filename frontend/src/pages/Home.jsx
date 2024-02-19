@@ -18,10 +18,11 @@ const Home = () => {
   let volunteers = {}
   let donors = {}
 
+  // Check if user is logged in
   useEffect(() => {
     setLoading(true);
     axios
-      .get("http://localhost:8080/", { withCredentials: true })
+      .get("https://ecoback.tennisbowling.com/", { withCredentials: true })
       .then((res) => {
         if (!res.data.authenticated) {
           Navigate("/login");
@@ -33,12 +34,14 @@ const Home = () => {
       });
   }, []);
 
-  axios.get("http://localhost:8080/projects/get_all_posts")
-    .then((res) => {
-      setPosts(res.data);
-      setLoading(false);
-    })
-
+  // Get all posts available
+  useEffect(() => {
+    axios.get("https://ecoback.tennisbowling.com/projects/get_all_posts")
+      .then((res) => {
+        setPosts(res.data);
+        setLoading(false);
+      })
+  }, []);
 
   return (
     <>
@@ -46,12 +49,12 @@ const Home = () => {
       {loading ? (<h1>Loading</h1>) :
 
         (
-          <div className="flex">
+          <div className="flex bg-gray-800">
 
             <Sidebar />
 
             <div className='border-0 flex-grow p-4'>
-              <div className="grid gap-4 2xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 px-[10%] py-16">
+              <div className="grid gap-4 2xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2 px-[10%] py-16 text-white">
                 {posts.map((post, index) => (
                   <div key={index} className={index !== posts.length - 1 ? '' : ''}>
                     <SocialMediaPost

@@ -9,10 +9,13 @@ import Register from './pages/Register';
 import CreatePost from './pages/CreatePost';
 import Search from './pages/Search';
 import PostPage from './pages/PostPage';
+import Donate from './pages/Donate';
+import Information from './pages/information'
 
 const App = () => {
   return (
-    <div>
+    <>
+    {/* Route to all pages */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/accounts" element={<Account />} />
@@ -22,10 +25,11 @@ const App = () => {
         <Route path="/createpost" element={<CreatePost />} />
         <Route path="/search" element={<Search />} />
         <Route path="/postpage/:id" element={<PostPage />} />
-
+        <Route path="/donate" element={<Donate />} />
+        <Route path="/information" element={<Information />} />
         {/* <Route path="/home" element={<TestHome />} /> */}
       </Routes> 
-    </div> 
+    </> 
   )
 }
 
