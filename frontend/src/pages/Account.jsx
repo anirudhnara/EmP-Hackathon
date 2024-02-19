@@ -1,8 +1,12 @@
 import React from 'react'
+import Header from './Header'
 
 const Account = () => {
   return (
-    <div>Account</div>
+    <>
+      <Header name={window.location.pathname} />
+      <div>Account</div>
+    </>
   )
 }
 

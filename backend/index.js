@@ -37,9 +37,9 @@ app.get("/", async (req, res) => {
     return res.status(200).send({ authenticated: req.isAuthenticated()});
 });
 
-app.get("/test", async (req, res) => {
+app.get("/get_user", async (req, res) => {
 	if (checkNotAuthenticated) {
-		return res.status(200).send({ username: req.user.username });
+		return res.status(200).send({ user: req.user });
 	}
 });
 
@@ -110,7 +110,6 @@ function checkNotAuthenticated(req, res, next) {
 	}
 	next();
 }
-
 
 mongoose
 	.connect(MONGO_URL)

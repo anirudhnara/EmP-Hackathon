@@ -26,6 +26,22 @@ const postSchema = new mongoose.Schema(
 			type: Boolean,
 			required: true,
 		},
+		volunteers: {
+			type: [String],
+			required: true,
+		},
+		donors: {
+			type: [String],
+			required: true,
+		},
+		numVolunteers: {
+			type: Number,
+			required: true,
+		},
+		numDonors: {
+			type: Number,
+			required: true,
+		},
 	},
 	{
 		timestamps: true,

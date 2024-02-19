@@ -10,6 +10,21 @@ const Header = (props) => {
   const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
 
+  const logout = () => {
+    axios
+      .delete("http://localhost:8080/logout", { withCredentials: true })
+      .then((response) => {
+        enqueueSnackbar("Logout Success", {
+          variant: "success",
+          autoHideDuration: 1000,
+        });
+        window.location.href = "/login";
+      })
+      .catch((error) => {
+        enqueueSnackbar("Error", { variant: "error", autoHideDuration: 1000 });
+      });
+  }
+
   useEffect(() => {
     setLoading(true);
     setLoggedIn(false);
@@ -31,8 +46,11 @@ const Header = (props) => {
     if (loggedIn) {
       return (
         <div className='flex items-center gap-10'>
-          <a href="./dashboard" className={` ${window.location.pathname === '/dashboard' ? 'text-[gray]' : 'text-[blue]'}`}>
-            <p className='text-lg'>Dashboard</p>
+          <a href="./profile" className={` ${window.location.pathname === '/profile' ? 'text-[gray]' : 'text-[blue]'}`}>
+            <p className='text-lg'>profile</p>
+          </a>
+          <a  href="javascript:void(0);" onClick={logout} className="text-[blue]">
+            <p className='text-lg'>logout</p>
           </a>
         </div>
       );

@@ -8,7 +8,6 @@ router.get("/test2", async (req, res) => {
 });
 
 router.post("/create_post", async (req, res) => {
-    console.log(req.body.post)
     try {
         if (
             !req.body.post.title || !req.body.post.text || req.body.post.isVolunteer == undefined || req.body.post.isFundraiser == undefined
@@ -20,7 +19,10 @@ router.post("/create_post", async (req, res) => {
 
         var newPost = req.body.post;
         newPost.username = req.user.username;
-
+        newPost.volunteers = [];
+        newPost.donors = [];
+        newPost.numVolunteers = 0;
+        newPost.numDonors = 0;
 
         const userId = req.user._id
         let user = await User.findById(userId)
@@ -35,36 +37,112 @@ router.post("/create_post", async (req, res) => {
     }
 });
 
+
+router.post("/volunteer", async (req, res) => {
+    try {
+        if (!req.body.post_title) {
+            return res.status(400).send({ message: "post_title is required" });
+        } 
+
+        let users = await User.find()
+        let posts = []
+        users.forEach(user => {
+            posts = posts.concat(user.posts)
+        });
+
+        let post = posts.find(post => post.title === req.body.post_title)
+        if (!post) {
+            return res.status(400).send({ message: "Post not found" });
+        }
+
+        if (post.volunteers.includes(req.user.username)) {
+            return res.status(400).send({ message: "User is already volunteering for this post" });
+        }
+
+        let user = await User.findOne({ username: post.username })
+        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, volunteers: p.volunteers.concat(req.user.username) } : p) })
+        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, numVolunteers: p.numVolunteers + 1 } : p) })
+        await user.save()
+
+        return res.status(200).send("Volunteered successfully")
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: error.message });
+    }
+})
+
+router.post("/donate", async (req, res) => {
+    try {
+        if (!req.body.post_title) {
+            return res.status(400).send({ message: "post_title is required" });
+        }
+
+        let users = await User.find()
+        let posts = []
+        users.forEach(user => {
+            posts = posts.concat(user.posts)
+        });
+
+        let post = posts.find(post => post.title === req.body.post_title)
+        if (!post) {
+            return res.status(400).send({ message: "Post not found" });
+        }
+
+        if (post.donors.includes(req.user.username)) {
+            return res.status(400).send({ message: "User is already volunteering for this post" });
+        }
+
+        let user = await User.findOne({ username: post.username })
+        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, donors: p.donors.concat(req.user.username) } : p) })
+        user.set({ posts: user.posts.map(p => p.title === req.body.post_title ? { ...p, numDonors: p.numDonors + 1 } : p) })
+        await user.save()
+
+        return res.status(200).send("Donated successfully")
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ message: error.message });
+    }
+})
+
 router.get("/get_user_posts", async (req, res) => {
     try {
-        if (!req.body.user_id) {
-            return res.status(400).send({ message: "user_id is required" });
+        var userId = req.user._id
+        if (req.body.user_id != undefined) {
+            userId = req.body.user_id
         }
-        const userId = req.body.user_id
-        let user
-        if (userId) {
-            user = await User.findById(userId)
-        }
-        else {
-            user = req.user
-        }
-        return res.status(200).send(user.posts)
+
+        const user = await User.findById(userId)
+        return res.status(200).send(user.posts)   
     } catch (error) {
         console.log(error);
         res.status(500).send({ message: error.message });
     }
 });
 
-router.delete("/delete_post", async (req, res) => {
+router.delete("/delete_post", async (req, res) => { 
     try {
         if (!req.body.post_title) {
             return res.status(400).send({ message: "post_title is required" });
         }
         
         let users = await User.find()
+        let posts = []
         users.forEach(user => {
-            posts = posts.co
+            posts = posts.concat(user.posts)
         });
+
+        let post = posts.find(post => post.title === req.body.post_title)
+        if (!post) {
+            return res.status(400).send({ message: "Post not found" });
+        }
+
+        let user = await User.findOne({ username: post.username })
+        user.set({ posts: user.posts.filter(p => p.title !== req.body.post_title) })
+        await user.save()
+
+        return res.status(200).send("Post deleted successfully")
 
     } catch (error) {
         console.log(error);
@@ -99,5 +177,29 @@ router.get("/get_all_posts", async (req, res) => {
     }
 });
 
+router.post("/get_post", async (req, res) => {
+    try {
+        if (!req.body.post_title) {
+            return res.status(400).send({ message: "post_title is required" });
+        }
+
+        let users = await User.find()
+        let posts = []
+        users.forEach(user => {
+            posts = posts.concat(user.posts)
+        });
+
+        let post = posts.find(post => post.title === req.body.post_title)
+        if (!post) {
+            return res.status(400).send({ message: "Post not found" });
+        }
+
+        return res.status(200).send(post)
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).send({ message: error.message });
+    }
+});
 
 export default router;
