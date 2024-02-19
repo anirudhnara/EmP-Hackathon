@@ -23,7 +23,7 @@ app.use( // session middleware
 );
 
 app.use(cors({ // cors middleware
-	origin: 'http://localhost:5173',
+	origin: 'https://ecoback.tennisbowling.com',
 	methods: "GET, POST, PUT, DELETE",
 	credentials: true
 }));

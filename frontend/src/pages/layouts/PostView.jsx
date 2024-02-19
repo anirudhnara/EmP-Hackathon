@@ -45,7 +45,7 @@ const SocialMediaPost = ({ header, body, isVolunteer, isFundraiser, imgSrc, user
   useEffect(() => {
     if (clickedDonate) {
       setVolunteer(true)
-      axios.post("http://localhost:8080/projects/donate", { post_title: header }, { withCredentials: true })
+      axios.post("https://ecoback.tennisbowling.com/projects/donate", { post_title: header }, { withCredentials: true })
         .then((res) => {
           enqueueSnackbar("Donating", { variant: "success", autoHideDuration: 1000 });
           Navigate("/donate")
@@ -64,7 +64,7 @@ const SocialMediaPost = ({ header, body, isVolunteer, isFundraiser, imgSrc, user
   useEffect(() => {
     if (clickedVolunteer) {
       setVolunteer(true)
-      axios.post("http://localhost:8080/projects/volunteer", { post_title: header }, { withCredentials: true })
+      axios.post("https://ecoback.tennisbowling.com/projects/volunteer", { post_title: header }, { withCredentials: true })
         .then((res) => {
           enqueueSnackbar("Volunteering", { variant: "success", autoHideDuration: 1000 });
         })
@@ -81,7 +81,7 @@ const SocialMediaPost = ({ header, body, isVolunteer, isFundraiser, imgSrc, user
 
   // Set whether user is volunteering or donating
   useEffect(() => {
-    axios.post("http://localhost:8080/projects/user_status", { post_title: header }, { withCredentials: true })
+    axios.post("https://ecoback.tennisbowling.com/projects/user_status", { post_title: header }, { withCredentials: true })
       .then((res) => {
         setVolunteer(res.data.volunteering);
         setDonor(res.data.donating);

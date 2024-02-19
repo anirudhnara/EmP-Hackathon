@@ -48,6 +48,8 @@ const Register = () => {
 				enqueueSnackbar(error.response.data.message, { variant: "error", autoHideDuration: 1000 });
 			});
 	};
+
+	// If user pressed enter, also submit register request
 	const handleKeyPress = (event) => {
 		if (event.key === "Enter") {
 			handleRegister();
