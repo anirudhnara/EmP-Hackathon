@@ -22,7 +22,7 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("https://ecoback.tennisbowling.com/", { withCredentials: true })
+      .get("https://ecocollab.tennisbowling.com:444/", { withCredentials: true })
       .then((res) => {
         if (!res.data.authenticated) {
           Navigate("/login");
@@ -36,7 +36,7 @@ const Home = () => {
 
   // Get all posts available
   useEffect(() => {
-    axios.get("https://ecoback.tennisbowling.com/projects/get_all_posts")
+    axios.get("https://ecocollab.tennisbowling.com:444/projects/get_all_posts")
       .then((res) => {
         setPosts(res.data);
         setLoading(false);

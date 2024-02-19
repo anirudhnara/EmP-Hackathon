@@ -13,7 +13,7 @@ const Header = (props) => {
   // Log out the user
   const logout = () => {
     axios
-      .delete("https://ecoback.tennisbowling.com/logout", { withCredentials: true })
+      .delete("https://ecocollab.tennisbowling.com:444/logout", { withCredentials: true })
       .then((response) => {
         enqueueSnackbar("Logout Success", {
           variant: "success",
@@ -31,7 +31,7 @@ const Header = (props) => {
     setLoading(true);
     setLoggedIn(false);
     let res = axios
-      .get("https://ecoback.tennisbowling.com/", { withCredentials: true })
+      .get("https://ecocollab.tennisbowling.com:444/", { withCredentials: true })
       .then((res) => {
         if (res.data.authenticated) {
           setLoggedIn(true);

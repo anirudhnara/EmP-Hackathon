@@ -13,7 +13,7 @@ const Login = () => {
 	useEffect(() => {
 		setLoading(true);
 		axios
-			.get("https://ecoback.tennisbowling.com/", { withCredentials: true })
+			.get("https://ecocollab.tennisbowling.com:444/", { withCredentials: true })
 			.then((res) => {
 				if (res.data.authenticated) {
 					Navigate("/");
@@ -33,7 +33,7 @@ const Login = () => {
 			password,
 		};
 		axios
-			.post("https://ecoback.tennisbowling.com/login", data, { withCredentials: true })
+			.post("https://ecocollab.tennisbowling.com:444/login", data, { withCredentials: true })
 			.then((res) => {
 				enqueueSnackbar("Login Success", { variant: "success", autoHideDuration: 1000 });
 				Navigate("/");

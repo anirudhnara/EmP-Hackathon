@@ -18,7 +18,7 @@ const Search = () => {
 	// Check if user is logged in
 	useEffect(() => {
 		axios
-			.get("https://ecoback.tennisbowling.com/", { withCredentials: true })
+			.get("https://ecocollab.tennisbowling.com:444/", { withCredentials: true })
 			.then((res) => {
 				if (!res.data.authenticated) {
 					Navigate("/login");
@@ -32,7 +32,7 @@ const Search = () => {
 
 	// Search for posts once user submits query
 	useEffect(() => {
-		axios.post("https://ecoback.tennisbowling.com/projects/search_posts", { search_query: search, withCredentials: true })
+		axios.post("https://ecocollab.tennisbowling.com:444/projects/search_posts", { search_query: search, withCredentials: true })
 			.then((res) => {
 				setPosts(res.data);
 				setLoading(false);

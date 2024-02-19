@@ -22,12 +22,12 @@ app.use( // session middleware
 	})
 );
 
-// app.use(cors({ // cors middleware
-// 	origin: 'https://ecoback.tennisbowling.com',
-// 	methods: "GET, POST, PUT, DELETE",
-// 	credentials: true
-// }));
-app.use(cors())
+app.use(cors({ // cors middleware
+	origin: 'https://ecocollab.tennisbowling.com',
+	methods: "GET, POST, PUT, DELETE",
+	credentials: true,
+}));
+
 app.use(express.json()); // parse json data
 app.use(passport.initialize()); // passport middleware
 app.use(passport.session()); // passport middleware

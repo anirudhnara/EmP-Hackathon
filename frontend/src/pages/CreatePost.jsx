@@ -22,7 +22,7 @@ const CreatePost = () => {
 	// Check if user is logged in
 	useEffect(() => {
 		axios
-			.get("https://ecoback.tennisbowling.com/", { withCredentials: true })
+			.get("https://ecocollab.tennisbowling.com:444/", { withCredentials: true })
 			.then((res) => {
 				if (!res.data.authenticated) {
 					navigate("/login");
@@ -82,7 +82,7 @@ const CreatePost = () => {
 		}
 		setLoading(true);
 		axios
-			.post('https://ecoback.tennisbowling.com/projects/create_post', { post }, { withCredentials: true })
+			.post('https://ecocollab.tennisbowling.com:444/projects/create_post', { post }, { withCredentials: true })
 			.then(() => {
 				setLoading(false);
 				enqueueSnackbar('Post created successfully', { variant: 'success' });

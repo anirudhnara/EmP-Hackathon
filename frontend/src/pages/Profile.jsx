@@ -20,7 +20,7 @@ const Profile = () => {
 	useEffect(() => {
 		setLoading(true);
 		axios
-			.get("https://ecoback.tennisbowling.com/", { withCredentials: true })
+			.get("https://ecocollab.tennisbowling.com:444/", { withCredentials: true })
 			.then((res) => {
 				if (!res.data.authenticated) {
 					Navigate("/login");
@@ -34,7 +34,7 @@ const Profile = () => {
 
 	// See the user's own posts
 	useEffect(() => {
-		axios.get("https://ecoback.tennisbowling.com/projects/get_user_posts", { withCredentials: true })
+		axios.get("https://ecocollab.tennisbowling.com:444/projects/get_user_posts", { withCredentials: true })
 			.then((res) => {
 				setPosts(res.data);
 				setLoading(false);
@@ -43,7 +43,7 @@ const Profile = () => {
 
 	// Get information on the user
 	useEffect(() => {
-		axios.get("https://ecoback.tennisbowling.com/get_user", { withCredentials: true })
+		axios.get("https://ecocollab.tennisbowling.com:444/get_user", { withCredentials: true })
 			.then((res) => {
 				setUser(res.data.user);
 			})
@@ -51,7 +51,7 @@ const Profile = () => {
 
 	// Delete the post
 	const handleDeletePost = (post_title) => {
-		axios.post(`https://ecoback.tennisbowling.com/projects/delete_post`, { post_title: post_title }, { withCredentials: true })
+		axios.post(`https://ecocollab.tennisbowling.com:444/projects/delete_post`, { post_title: post_title }, { withCredentials: true })
 			.then((res) => {
 				setPosts(posts.filter((post) => post.title !== post_title));
 				enqueueSnackbar("Post Deleted", { variant: "success", autoHideDuration: 1000 });

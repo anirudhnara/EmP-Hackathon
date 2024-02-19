@@ -15,7 +15,7 @@ const Register = () => {
 	useEffect(() => {
 		setLoading(true);
 		axios
-			.get("https://ecoback.tennisbowling.com/", { withCredentials: true })
+			.get("https://ecocollab.tennisbowling.com:444/", { withCredentials: true })
 			.then((res) => {
 				if (res.data.authenticated) {
 					Navigate("/profile");
@@ -38,7 +38,7 @@ const Register = () => {
 			return;
 		}
 		axios
-			.post("https://ecoback.tennisbowling.com/register", data, { withCredentials: true })
+			.post("https://ecocollab.tennisbowling.com:444/register", data, { withCredentials: true })
 			.then((res) => {
 				enqueueSnackbar("Registered", { variant: "success", autoHideDuration: 1000 });
 				Navigate("/profile");
