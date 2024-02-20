@@ -14,8 +14,7 @@ Then go to your project folder in your terminal and install dependencies with th
 cd ./frontend
 npm i
 
-cd ..
-cd ./backend
+cd ../backend
 npm i
 ```
 Once done, go into the frontend and backend folders in two different terminal windows, and run `npm run dev` in both. The website should now be accessible at `localhost:5173`
