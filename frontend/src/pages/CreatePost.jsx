@@ -63,7 +63,7 @@ const CreatePost = () => {
 			setImageLink(response.data.location);
 
 		} catch (error) {
-			console.error("buns", error);
+			console.error("Error: ", error);
 		}
 	};
 
